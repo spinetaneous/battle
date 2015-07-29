@@ -68,7 +68,12 @@ def battle(enemy):
 
 def fight(enemy):
     #while enemy.hp >= 0 or you.hp >= 0:
-    move = raw_input("Next move: ATTACK or USE MAGIC?").lower
-    print move
+    move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
+    if move == "attack":
+        print("You attempt to hit the {}!".format(enemy.name))
+        if you.land_hit:
+            print("Your hit inflicted {} damage points!".format(you.attack(enemy)))
+        else:
+            print("You missed!")
 
-battle(dragon)
+fight(dragon)
