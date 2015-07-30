@@ -3,14 +3,15 @@ import random
 from time import sleep
 
 class Character:
-    def __init__(self, name, hp, atk, hit_chance):
+    def __init__(self, name, hp, atk, hit_chance, wis):
         self.name = name
         self.hp = hp
         self.atk = atk
         self.xp = (self.hp+self.atk)/2
         self.hit_chance = hit_chance #float between 0.0 and 1.0, with 1.0 meaning a guaranteed hit
+        self.wis = wis #same as hit_chance but for magic instead
     
-    def land_hit(self):
+    def land_attack(self):
         hit = random.random()
         return True if hit < self.hit_chance else False
     
@@ -19,13 +20,18 @@ class Character:
         enemy.hp -= damage
         return damage
         
+    def land_magic(self):
+        hit = random.random()
+        return True if hit < self.wis else False
+        
+        
     def give_xp(self):
         exp = math.floor((random.random()*self.xp*10))
         return exp
         
-dragon = Character("dragon", 50, 15, 0.25)
-slime = Character("slime", 10, 5, 0.50)
-you = Character("you", 20, 10, 0.75)
+dragon = Character("dragon", 50, 15, 0.25, 0.75)
+slime = Character("slime", 10, 5, 0.50, 0.25)
+you = Character("you", 20, 10, 0.75, 0.75)
 
 def battle(enemy):
     slaying = True
@@ -36,7 +42,7 @@ def battle(enemy):
         print("A wild {0} hops in front of you.\nWith only {1} HP, you attempt to fight it.".format(enemy.name, you.hp))
     #sleep(2)
     while slaying:
-        if you.land_hit():
+        if you.land_attack():
             your_dmg = you.attack(enemy)
             print("\nYou have hit the {0}!\nYour hit inflicted {1} damage {2}!".format(enemy.name if enemy != you else "other you", your_dmg, "point" if your_dmg == 1 else "points"))
             if enemy.hp <= 0:
@@ -48,7 +54,7 @@ def battle(enemy):
         else:
             print("\nYou missed! The {} attempts to hit you.".format(enemy.name if enemy != you else "other you"))
             #sleep(2)
-            if enemy.land_hit():
+            if enemy.land_attack():
                 enemy_dmg = enemy.attack(you)
                 print("\nThe {0} inflicts {1} damage {2} on you.".format(enemy.name if enemy != you else "other you", enemy_dmg, "point" if enemy_dmg == 1 else "points"))
                 if you.hp <= 0:
@@ -71,9 +77,10 @@ def fight(enemy):
     move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
     if move == "attack":
         print("You attempt to hit the {}!".format(enemy.name))
-        if you.land_hit:
+        if you.land_attack:
             print("Your hit inflicted {} damage points!".format(you.attack(enemy)))
         else:
             print("You missed!")
-
+    elif move == "use magic":
+        print("You attempt to cast a spell on the {}!".format(enemy.name))
 fight(dragon)
