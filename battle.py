@@ -44,15 +44,18 @@ class Player:
                 print("Your spell inflicted {} damage points!".format(self.magic(enemy)))
             else:
                 print("You missed!")
+        else:
+            print("Invalid move.")
         
 class Enemy:
-    def __init__(self, name, hp, atk, agl, int, wis):
+    def __init__(self, name, hp, atk, agl, int, wis, mgc_tendency):
         self.name = name
         self.hp = hp
         self.atk = atk
         self.agl = agl
         self.int = int
         self.wis = wis
+        self.mgc_tendency = mgc_tendency #float between 0.0 and 1.0, where 1.0 means enemy uses magic 100% of the time
         self.exp = (self.hp + self.atk)/2
         
     def land_attack(self):
@@ -74,7 +77,7 @@ class Enemy:
         return damage
         
     def turn(self, enemy): #this assumes the enemy of the enemy is you
-        if random.getrandbits(1) == 1:
+        if random.random() < self.mgc_tendency:
             print("The {} attempts to hit you!".format(self.name))
             if self.land_attack():
                 print("The {} inflicts {} damage points on you!".format(self.name, self.attack(enemy)))
@@ -92,9 +95,12 @@ class Enemy:
         exp = math.floor((random.random()*self.xp*10))
         return exp
         
-dragon = Enemy("dragon", 50, 15, 0.25, 20, 0.75)
-slime = Enemy("slime", 10, 5, 0.50, 2, 0.25)
+#player_name = Player(name, hp, atk, agl, int, wis)
 you = Player("you", 20, 10, 0.75, 15, 0.75)
+
+#enemy_name = Enemy(name, hp, atk, agl, int, wis)
+dragon = Enemy("dragon", 50, 15, 0.25, 20, 0.75, 0.50)
+slime = Enemy("slime", 10, 5, 0.50, 2, 0.25, 0.10)
 
 def battle(enemy):
     slaying = True
@@ -135,11 +141,14 @@ def battle(enemy):
                 
 def fight(enemy):
     #while enemy.hp >= 0 or you.hp >= 0:
-    fighting = True
-    while fighting:
-        you.turn(enemy)
-        enemy.turn(you)
-        fighting = False
+    if enemy == you:
+        print ("You can't fight yourself.")
+    else:
+        fighting = True
+        while fighting:
+            you.turn(enemy)
+            enemy.turn(you)
+            fighting = False
         
 #battle(dragon)
 fight(dragon)
