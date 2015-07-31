@@ -3,18 +3,18 @@ import random
 from time import sleep
 
 class Character:
-    def __init__(self, name, hp, atk, hit_chance, int, wis):
+    def __init__(self, name, hp, atk, agl, int, wis):
         self.name = name
         self.hp = hp
         self.atk = atk
         self.xp = (self.hp+self.atk)/2
-        self.hit_chance = hit_chance #float between 0.0 and 1.0, with 1.0 meaning a guaranteed hit
+        self.agl = agl #float between 0.0 and 1.0, with 1.0 meaning a guaranteed hit
         self.int = int
-        self.wis = wis #same as hit_chance but for magic instead
+        self.wis = wis #same as agl but for magic instead
     
     def land_attack(self):
         hit = random.random()
-        return True if hit < self.hit_chance else False
+        return True if hit < self.agl else False
     
     def attack(self, enemy):
         damage = math.floor(random.random()*self.atk+1)
@@ -30,12 +30,55 @@ class Character:
         enemy.hp -= damage
         return damage
         
+class Enemy:
+    def __init__(self, name, hp, atk, agl, int, wis):
+        self.name = name
+        self.hp = hp
+        self.atk = atk
+        self.agl = agl
+        self.int = int
+        self.wis = wis
+        self.exp = (self.hp + self.atk)/2
+        
+    def land_attack(self):
+        hit = random.random()
+        return True if hit < self.agl else False
+    
+    def attack(self, enemy):
+        damage = math.floor(random.random()*self.atk+1)
+        enemy.hp -= damage
+        return damage
+        
+    def land_magic(self):
+        hit = random.random()
+        return True if hit < self.wis else False
+        
+    def magic(self, enemy):
+        damage = math.floor(random.random()*self.int+5)
+        enemy.hp -= damage
+        return damage
+        
+    def turn(self, enemy): #this assumes the enemy of the enemy is you
+        if random.getrandbits(1) == 1:
+            print("The {} attempts to hit you!".format(self.name))
+            if self.land_attack():
+                print("The {} inflicts {} damage points on you!".format(self.name, self.attack(enemy)))
+            else:
+                print("The {} misses!".format(enemy.name))
+        else:
+            print("The {} attempts to cast a spell on you!".format(self.name))
+            if self.land_magic():
+                print("The {} inflicts {} damage points on you!".format(self.name, self.magic(enemy)))
+            else:
+                print("The {} misses!".format(self.name))
+        print("You have {} HP left.".format(enemy.hp))
+    
     def give_xp(self):
         exp = math.floor((random.random()*self.xp*10))
         return exp
         
-dragon = Character("dragon", 50, 15, 0.25, 20, 0.75)
-slime = Character("slime", 10, 5, 0.50, 2, 0.25)
+dragon = Enemy("dragon", 50, 15, 0.25, 20, 0.75)
+slime = Enemy("slime", 10, 5, 0.50, 2, 0.25)
 you = Character("you", 20, 10, 0.75, 15, 0.75)
 
 def battle(enemy):
@@ -77,10 +120,9 @@ def battle(enemy):
                 
 def fight(enemy):
     #while enemy.hp >= 0 or you.hp >= 0:
-    your_turn = True
-    enemy_turn = False
-    move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
-    while your_turn:
+    fighting = True
+    while fighting:
+        move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
         if move == "attack":
             print("You attempt to hit the {}!".format(enemy.name))
             if you.land_attack:
@@ -93,23 +135,10 @@ def fight(enemy):
                 print("Your spell inflicted {} damage points!".format(you.magic(enemy)))
             else:
                 print("You missed!")
-        your_turn = False
-        enemy_turn = True
-    while enemy_turn:
-        if random.getrandbits(1) == 1:
-            print("The {} attempts to hit you!".format(enemy.name))
-            if enemy.land_attack:
-                print("The {} inflicts {} damage points on you!".format(enemy.name, enemy.atk))
-            else:
-                print("The {} misses!".format(enemy.name))
         else:
-            print("The {} attempts to cast a spell on you!".format(enemy.name))
-            if enemy.land_magic:
-                print("The {} inflicts {} damage points on you!".format(enemy.name, enemy.magic))
-            else:
-                print("The {} misses!".format(enemy.name))
-        print("You have {} HP left.".format(you.hp))
-        enemy_turn = False
+            break
+        enemy.turn(you)
+        fighting = False
         
-battle(dragon)
-#fight(dragon)
+#battle(dragon)
+fight(dragon)
