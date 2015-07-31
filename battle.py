@@ -2,7 +2,7 @@ import math
 import random
 from time import sleep
 
-class Character:
+class Player:
     def __init__(self, name, hp, atk, agl, int, wis):
         self.name = name
         self.hp = hp
@@ -29,6 +29,21 @@ class Character:
         damage = math.floor(random.random()*self.int+5)
         enemy.hp -= damage
         return damage
+        
+    def turn(self, enemy):
+        move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
+        if move == "attack":
+            print("You attempt to hit the {}!".format(enemy.name))
+            if self.land_attack():
+                print("Your hit inflicted {} damage points!".format(self.attack(enemy)))
+            else:
+                print("You missed!")
+        elif move == "use magic":
+            print("You attempt to cast a spell on the {}!".format(enemy.name))
+            if self.land_magic():
+                print("Your spell inflicted {} damage points!".format(self.magic(enemy)))
+            else:
+                print("You missed!")
         
 class Enemy:
     def __init__(self, name, hp, atk, agl, int, wis):
@@ -64,7 +79,7 @@ class Enemy:
             if self.land_attack():
                 print("The {} inflicts {} damage points on you!".format(self.name, self.attack(enemy)))
             else:
-                print("The {} misses!".format(enemy.name))
+                print("The {} misses!".format(self.name))
         else:
             print("The {} attempts to cast a spell on you!".format(self.name))
             if self.land_magic():
@@ -79,7 +94,7 @@ class Enemy:
         
 dragon = Enemy("dragon", 50, 15, 0.25, 20, 0.75)
 slime = Enemy("slime", 10, 5, 0.50, 2, 0.25)
-you = Character("you", 20, 10, 0.75, 15, 0.75)
+you = Player("you", 20, 10, 0.75, 15, 0.75)
 
 def battle(enemy):
     slaying = True
@@ -122,21 +137,7 @@ def fight(enemy):
     #while enemy.hp >= 0 or you.hp >= 0:
     fighting = True
     while fighting:
-        move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
-        if move == "attack":
-            print("You attempt to hit the {}!".format(enemy.name))
-            if you.land_attack:
-                print("Your hit inflicted {} damage points!".format(you.attack(enemy)))
-            else:
-                print("You missed!")
-        elif move == "use magic":
-            print("You attempt to cast a spell on the {}!".format(enemy.name))
-            if you.land_magic:
-                print("Your spell inflicted {} damage points!".format(you.magic(enemy)))
-            else:
-                print("You missed!")
-        else:
-            break
+        you.turn(enemy)
         enemy.turn(you)
         fighting = False
         
