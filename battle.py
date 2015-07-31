@@ -76,20 +76,22 @@ def battle(enemy):
                 #sleep(2)
                 
 #battle(dragon)
-
 def fight(enemy):
     #while enemy.hp >= 0 or you.hp >= 0:
+    your_turn = True
     move = raw_input("Next move: ATTACK or USE MAGIC? ").lower()
-    if move == "attack":
-        print("You attempt to hit the {}!".format(enemy.name))
-        if you.land_attack:
-            print("Your hit inflicted {} damage points!".format(you.attack(enemy)))
-        else:
-            print("You missed!")
-    elif move == "use magic":
-        print("You attempt to cast a spell on the {}!".format(enemy.name))
-        if you.land_magic:
-            print("Your spell inflicted {} damage points!".format(you.magic(enemy)))
-        else:
-            print("You missed!")
+    while your_turn:
+        if move == "attack":
+            print("You attempt to hit the {}!".format(enemy.name))
+            if you.land_attack:
+                print("Your hit inflicted {} damage points!".format(you.attack(enemy)))
+            else:
+                print("You missed!")
+        elif move == "use magic":
+            print("You attempt to cast a spell on the {}!".format(enemy.name))
+            if you.land_magic:
+                print("Your spell inflicted {} damage points!".format(you.magic(enemy)))
+            else:
+                print("You missed!")
+        your_turn = False
 fight(dragon)
