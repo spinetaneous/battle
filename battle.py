@@ -3,7 +3,7 @@ import random
 from time import sleep
 
 class Player:
-    def __init__(self, name, hp, atk, agl, int, wis):
+    def __init__(self, name, hp, atk, agl, int, wis, crit_chance):
         self.name = name
         self.hp = hp
         self.atk = atk
@@ -11,6 +11,7 @@ class Player:
         self.agl = agl #float between 0.0 and 1.0, with 1.0 meaning a guaranteed hit
         self.int = int
         self.wis = wis #same as agl but for magic instead
+        self.crit_chance = crit_chance
     
     def land_attack(self):
         hit = random.random()
@@ -48,7 +49,7 @@ class Player:
             print("Invalid move.")
         
 class Enemy:
-    def __init__(self, name, hp, atk, agl, int, wis, mgc_tendency):
+    def __init__(self, name, hp, atk, agl, int, wis, mgc_tendency, crit_chance):
         self.name = name
         self.hp = hp
         self.atk = atk
@@ -56,6 +57,7 @@ class Enemy:
         self.int = int
         self.wis = wis
         self.mgc_tendency = mgc_tendency #float between 0.0 and 1.0, where 1.0 means enemy uses magic 100% of the time
+        self.crit_chance = crit_chance
         self.exp = (self.hp + self.atk)/2
         
     def land_attack(self):
